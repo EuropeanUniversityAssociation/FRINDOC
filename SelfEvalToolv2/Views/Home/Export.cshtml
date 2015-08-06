@@ -1,0 +1,367 @@
+﻿@model SelfEvalToolv2.Models.ExportViewModel
+
+@{
+    ViewBag.Title = "Export";
+    
+}
+
+@helper ParseHtml(string html)
+{
+    if (string.IsNullOrWhiteSpace(html)){ <text>""</text> }
+
+    if (!html.Contains("<html>")) { 
+        html = "<html><head></head><body>" + html + "</body></html>";
+    }
+
+    HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+    doc.LoadHtml(html);
+    html = doc.DocumentNode.SelectSingleNode("//body").InnerText;
+
+    html = System.Text.RegularExpressions.Regex.Replace(html, @"<[^>]*>", String.Empty);
+    html = HttpUtility.HtmlDecode(html);
+
+    <text>@Html.Raw(html)</text>;
+}
+
+<style type="text/css">
+    .parentcategory-item span {
+        font-size: 15pt;
+        font-weight: bold;
+    }
+
+    .category-item span {
+        font-size: 15pt;
+        font-weight: normal;
+    }
+
+    .answerquestion-item span {
+        font-size: 14pt;
+        font-weight: normal;
+    }
+
+    .panel {
+        padding: 0;
+        margin-bottom: 5px;
+        color: #000;
+        font-size: 16px;
+        line-height: 1.3em;
+        font-weight: normal;
+        min-width: 500px;
+        overflow: auto;
+    }
+
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    li {
+        /*background-image: url(page.png);*/
+        background-position: 0 1px;
+        background-repeat: no-repeat;
+        padding-left: 20px;
+    }
+
+        li.folder {
+            /*background-image: url(folder.png);*/
+        }
+
+    a {
+        color: #000000;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+    dl {
+        line-height: 1.3em;
+        overflow: auto;
+        width: 100%;
+    }
+
+    dt {
+        float: left;
+        width: 100%;
+    }
+
+    dd {
+        float: left;
+        margin-left: 20px;
+        /*margin-top: -1.3em; /* i.e. minus line-height */
+    }
+
+    dt:after {
+        content: '';
+        display: inline-block;
+        width: 3.5em; /* Max width of a dd element */
+    }
+
+    .nofloat {
+        float: none;
+        clear: both;
+    }
+
+    @@media print {
+        div {
+            page-break-inside: avoid;
+        }
+
+        li.parentcategory-item {
+            display: block;
+            page-break-before: always;
+        }
+    }
+</style>
+
+@if (string.IsNullOrWhiteSpace(Model.OrganisationName))
+{
+    <div class="alert alert-info noprint">Please select an institute from the list below.</div>
+}
+
+<form action="~/Home/Export" method="post">
+    <dl>
+        <dt class="h4">Select the institute: </dt>
+        <dd>@Html.DropDownListFor(model => model.SelectedBenchmarkID, Model.Organisations, new { onchange = "return formSubmit(this.form)" })</dd>    
+        <dt class="h4">Optionally select the unit: </dt>
+        <dd>@Html.DropDownListFor(model => model.SelectedSubAccount, Model.SubAccounts, "Main account", new { onchange = "return formSubmit(this.form)" })<br /></dd>
+    </dl>
+</form>
+<div class="pull-right" style="margin-top:-30px">
+    <a href="@Url.Action("Excel", "Export", new { id = Model.SelectedBenchmarkID })" class="btn btn-default"><i class="glyphicon glyphicon-download-alt"></i> Export Excel</a>
+</div>
+<br />
+
+@foreach (var benchmark in Model.ApplicableBenchmarks)
+{
+    <div class="panel panel-primary">
+        <div class="panel-heading">General Information</div>
+        <div class="panel-body">
+            <dl>
+                <dt>The name of the institution:</dt>
+                <dd>@benchmark.InstituteName</dd>
+                <dt>The country in which the institution is situated:</dt>
+                <dd>@benchmark.Country </dd>
+                <dt>The name of the person responsible for coordinating the responses:</dt>
+                <dd>@benchmark.ResponsiblePersonName </dd>
+                <dt>The username that was used for Frindoc:</dt>
+                <dd>@benchmark.User </dd>
+                <dt>Number (estimation if necessary) of doctoral candidates/PhD students:</dt>
+                <dd>@benchmark.NrOfDoctoralCandidates </dd>
+                <dt>Number (estimation if necessary) of undergraduate students:</dt>
+                <dd>@benchmark.NrOfUndergraduates </dd>
+                <dt>The context within which they are evaluating their institution by:</dt>
+                <dd>
+                    @{
+    var choice = "";
+    switch (benchmark.Choice)
+    {
+        case 0: choice = "Other"; break;
+        case 1: choice = "We are rating our institution in comparison to a particular group of institutions (for example, partner institutions or those which operate in a similar context to ours)."; break;
+        case 2: choice = "We are rating our institution in our national context"; break;
+        case 3: choice = "We are rating our institution in our regional context (for example, Europe, South East Asia, Scandinavia etc.)."; break;
+        case 4: choice = "We are rating our institution in a global context"; break;
+    }
+            <text>@choice</text>
+                    }
+                </dd>
+                @if (!string.IsNullOrWhiteSpace(benchmark.Clarification)) { 
+                <dt>Benchmark Clarification: </dt>
+                <dd>@ParseHtml(benchmark.Clarification)</dd>
+                }
+                @if (!string.IsNullOrWhiteSpace(benchmark.Alternative)) {
+                <dt>Benchmark Alternative: </dt>
+                <dd>@ParseHtml(benchmark.Alternative)</dd>
+                }
+            </dl>
+        </div>
+    </div>
+
+}
+@if (Model.Categories != null)
+{
+    <div id="highchart" style="margin: 0 auto" class="noprint"></div>
+    <img id="highcharts-png" width="700" class="noscreen" />
+    <canvas id="canvas" width="800" height="800" class="noscreen noprint"></canvas>
+
+    <ul>
+        @foreach (var x in Model.Categories.Where(c => c.ChildCategories != null && c.ChildCategories.Count > 0))
+        {
+            <li class="parentcategory-item">
+                <span>@x.Title</span>
+                <ul>
+                    @foreach (var c in x.ChildCategories)
+                    {
+                        <li class="category-item">
+                            @if (c.Questions != null)
+                            {
+                                <span>@c.Title (@c.Weight)</span>
+                                <ul>
+                                    @foreach (var q in c.Questions)
+                                    {
+                                        <li class="answerquestion-item">
+                                            <span>@q.Text (@q.Weight)</span>
+                                            @if (q.Answers != null && q.Answers.Count > 0)
+                                            {
+                                                // set the active user
+                                                var allUsers = q.Answers.Where(p => Model.ApplicableBenchmarks.Any(ab => ab.User == p.User));
+                                                if (!string.IsNullOrWhiteSpace(Model.SelectedSubAccount))
+                                                {
+                                                    allUsers = q.Answers.Where(p => Model.SelectedSubAccount == p.User);
+                                                }
+                                                
+                                                if (allUsers != null && allUsers.Count() > 0)
+                                                {
+                                                    var a = allUsers.First();
+                                                    
+                                                    <div class="panel panel-primary">
+                                                        <div class="panel-body">
+                                                            <strong>Current: </strong>
+                                                            @for (int i = 1; i < 6; i++)
+                                                            {
+                                                                if (int.Parse(a.Answer) >= i)
+                                                                { <img src="@Url.Content("~/Content/star_1.png")" /> }
+                                                                else
+                                                                { <img src="@Url.Content("~/Content/star_0.png")" /> }
+                                                            }
+                                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                                            <strong>Goal: </strong>
+                                                            @for (int i = 1; i < 6; i++)
+                                                            {
+                                                                if (int.Parse(a.Goal) >= i)
+                                                                { <img src="@Url.Content("~/Content/star_1.png")" /> }
+                                                                else
+                                                                { <img src="@Url.Content("~/Content/star_0.png")" /> }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel panel-primary">
+                                                        <div class="panel-heading">Reason and background information of the current status rating</div>
+                                                        <div class="panel-body">@Html.Raw(a.ExtraAnswer1)</div>
+                                                    </div>
+                                                    <div class="panel panel-primary">
+                                                        <div class="panel-heading">Goals to achieve:</div>
+                                                        <div class="panel-body">@Html.Raw(a.ExtraAnswer2)</div>
+                                                    </div>
+                                                    <div class="panel panel-primary">
+                                                        <div class="panel-heading">Instruments to achieve goals:</div>
+                                                        <div class="panel-body">@Html.Raw(a.ExtraAnswer3)</div>
+                                                    </div>
+                                                }
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+    </ul>
+}
+
+@section scripts{
+    @Scripts.Render("~/bundles/highchart")
+    <script src="~/Scripts/canvg.js"></script>
+    <script src="~/Scripts/rgbcolor.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#highchart').highcharts({
+
+                chart: {
+                    polar: true,
+                    type: 'line'
+                },
+
+                title: {
+                    text: 'FRINDOC',
+                    x: -80
+                },
+
+                pane: {
+                    size: '80%'
+                },
+
+                xAxis: {
+                    categories: ["No categories loaded"],
+                    tickmarkPlacement: 'on',
+                    lineWidth: 0
+                },
+
+                yAxis: {
+                    gridLineInterpolation: 'polygon',
+                    lineWidth: 0,
+                    min: 0,
+                    max: 10
+                },
+
+                tooltip: {
+                    shared: true,
+                    pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y:,.0f}</b><br/>'
+                },
+
+                legend: {
+                    align: 'right',
+                    verticalAlign: 'top',
+                    y: 70,
+                    layout: 'vertical',
+                    floating: true
+                },
+
+                series: [{
+                    name: 'Status',
+                    data: [0],
+
+                }, {
+                    name: 'Goal',
+                    data: [1],
+                }]
+            });
+
+            @Html.Raw(Model.HighchartsOptions)
+
+            // collapsible lists
+            // Find list items representing folders and style them accordingly.  Also, turn them into links that can expand/collapse the tree leaf.
+            $('li > ul').each(function (i) {
+                // Find this list's parent list item.
+                var parent_li = $(this).parent('li');
+
+                // Style the list item as folder.
+                parent_li.addClass('folder');
+
+                // Temporarily remove the list from the
+                // parent list item, wrap the remaining
+                // text in an anchor, then reattach it.
+                var sub_ul = $(this).remove();
+                parent_li.wrapInner('<a/>').find('a').click(function () {
+                    // Make the anchor toggle the leaf display.
+                    sub_ul.toggle();
+                });
+                parent_li.append(sub_ul);
+            });
+
+            // set page title to selected institution
+            var title = 'FRINDOC - ' + $("#SelectedBenchmarkID option:selected").text();
+            $("#pagetitle").html(title);
+            document.title = title;
+
+
+            $("#exportLoader").hide();
+        });
+
+        function formSubmit(form) {
+            $("#exportLoader").show();
+
+            form.submit();
+            return true;
+        }
+
+    </script>
+    <div id="exportLoader" class="loader">
+        <img src="/images/ajax-loader.gif" alt="please wait..." /><br />
+    </div>
+}

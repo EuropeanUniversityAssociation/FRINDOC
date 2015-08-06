@@ -1,0 +1,23 @@
+﻿@media print {
+    * {
+        -webkit-print-color-adjust: exact;
+    }
+
+    .noprint {
+        display:none !important;
+    }
+    
+    #body, .main-content, footer{
+        background: none !important;
+    }
+
+    #highcharts-container {
+        margin: 0;
+        padding: 0;
+    }
+
+    .results-answer {
+        border: 1px solid black !important;
+    }
+}
+
