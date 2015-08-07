@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frindoc.Web", "SelfEvalToolv2\Frindoc.Web.csproj", "{CBAEA33A-4722-4315-A48E-E34FCD0098DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frindoc.Web", "Frindoc.Web\Frindoc.Web.csproj", "{CBAEA33A-4722-4315-A48E-E34FCD0098DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frindoc.Web.Tests", "Frindoc.Web.Tests\Frindoc.Web.Tests.csproj", "{61713661-B672-4DF9-9A2E-C7B4F373A886}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{CBAEA33A-4722-4315-A48E-E34FCD0098DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBAEA33A-4722-4315-A48E-E34FCD0098DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBAEA33A-4722-4315-A48E-E34FCD0098DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61713661-B672-4DF9-9A2E-C7B4F373A886}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61713661-B672-4DF9-9A2E-C7B4F373A886}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61713661-B672-4DF9-9A2E-C7B4F373A886}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61713661-B672-4DF9-9A2E-C7B4F373A886}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
