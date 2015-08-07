@@ -1,4 +1,4 @@
-# frindoc
+# FRINDOC
 FRINDOC aims at providing a comprehensive overview of good practices and valuable experiences for universities. The project will develop a framework containing a statement of good practice on internationalisation and an online tool for universities to aid planning and implementation of internationalisation strategies for doctoral education. It will be a comprehensive strategic tool for planning, promoting and supporting mobility in doctoral programmes enabling universities to attain a united picture of strategic goals, capacity and possibilities to implement the right structures for their particular profile.
 
 ## Getting Started
