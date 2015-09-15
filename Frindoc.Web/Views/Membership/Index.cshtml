@@ -1,0 +1,35 @@
+﻿@model Frindoc.Web.Models.MembershipOverview
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>All Users</h2>
+
+<table>
+    <tr>
+        <th>UserId</th>
+        <th>UserName</th>
+    </tr>
+    @foreach (var user in Model.Users)
+    {
+        <tr>
+            <td>@user.UserId</td>
+            <td>@Html.ActionLink(user.UserName, "EditUser", "Membership", new { UserId = user.UserId })</td>
+        </tr>
+    }
+</table>
+
+<h2>All Roles</h2>
+<table>
+    <tr>
+        <th>Role</th>
+    </tr>
+    @foreach (string role in Model.Roles)
+    {
+        <tr>
+            <td>@role</td>
+        </tr>
+    }
+</table>
+@Html.ActionLink("Add new role", "AddRole", "Membership")

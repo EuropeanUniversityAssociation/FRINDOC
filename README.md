@@ -12,3 +12,14 @@ Start by opening the solution in Visual Studio. The project uses Code-First Enti
 This will populate your database with the proper database structure.
 
 Now you're ready to run the project.
+
+## Frameworks being used
+### KnockoutJs (http://knockoutjs.com)
+By encapsulating data and behavior into a view model, you get a clean, extensible foundation on which to build sophisticated UIs without getting lost in a tangle of event handlers and manual DOM updates.
+### Bootstrap (http://getbootstrap.com)
+Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile first projects on the web.
+### EntityFramework.6.1.3 using code-first approach
+Entity Framework is Microsoft's recommended data access technology for new applications.
+### Asp.Net MVC 5
+ASP.NET MVC is a web framework that gives you a powerful, patterns-based way to build dynamic websites and Web APIs. ASP.NET MVC enables a clean separation of concerns and gives you full control over markup.
+
