@@ -1,54 +1,85 @@
 ﻿@model Frindoc.Web.Models.LoginModel
-
 @{
     ViewBag.Title = "Log in";
 }
-
 <hgroup class="title">
     <h1>@ViewBag.Title.</h1>
 </hgroup>
+<div class="row">
+    <div class="col-sm-4 col-xs-12">
+        <section id="loginForm" class="shadow">
+            @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
 
-<section id="loginForm">
-<h2>Enter your credentials below to log in.</h2>
-@using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl })) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+                <fieldset>
+                    <legend>Log in Form</legend>
+                    <ol>
+                        <li>
+                            @Html.LabelFor(m => m.UserName)
+                            @Html.TextBoxFor(m => m.UserName)
+                            @Html.ValidationMessageFor(m => m.UserName)
+                        </li>
+                        <li>
+                            @Html.LabelFor(m => m.Password)
+                            @Html.PasswordFor(m => m.Password)
+                            @Html.ValidationMessageFor(m => m.Password)
+                        </li>
+                        <li>
+                            @Html.CheckBoxFor(m => m.RememberMe)
+                            @Html.LabelFor(m => m.RememberMe, new { @class = "checkbox" })
+                        </li>
+                    </ol>
+                    <input type="submit" value="Log in" />
+                </fieldset>
+                <p>
+                    @Html.ActionLink("Register", "Register") if you don't have an account.
+                </p>
+                <p>
+                    Forgot your password? Click @Html.ActionLink("here", "ForgotPassword").
+                </p>
+            }
+        </section>
+    </div>
+    <div class="col-sm-8 col-xs-12">
+        <section class="introduction">
+            <h2>Framework for the Internationalisation of Doctoral Education (FRINDOC)</h2>
+            <br />
+            <p>
+                This online tool is an outcome of the “Framework for Internationalisation of Doctoral Education”
+                (FRINDOC) project. It is designed for universities interested in evaluating their internationalisation
+                strategies for doctoral education.
+            </p>
+            <p>
+                The FRINDOC project was coordinated by the European University Association (EUA) and managed
+                by a consortium of six partners: the University of Hong Kong, Stellenbosch University, Imperial
+                College London, the University of Bergen and the University of Camerino.
+            </p>
+            <p>
+                The project resulted in two main outcomes. Firstly, a framework for universities to develop and
+                implement their internationalisation strategies for doctoral education. It builds on the Salzburg
+                Principles and Recommendations, which calls on universities to approach the internationalisation of
+                doctoral education in a coherent and strategic manner. The framework can be found here.
+            </p>
+            <p>
+                Secondly, this online tool functions as a comprehensive strategic tool for planning, promoting and
+                supporting mobility in doctoral programmes enabling universities to attain a united picture of
+                strategic goals, capacity and possibilities to implement the right structures for their particular
+                profile.
+            </p>
+            <p>
+                <i>
+                    This project was carried out from 2012 to 2015 with the support of the Erasmus Mundus Programme
+                    of the European Commission. For more information, please contact the EUA Council for Doctoral
+                    Education Secretariat at info@eua-cde.org.
+                </i>
+            </p>
+        </section>
+    </div>
+</div>
 
-    <fieldset>
-        <legend>Log in Form</legend>
-        <ol>
-            <li>
-                @Html.LabelFor(m => m.UserName)
-                @Html.TextBoxFor(m => m.UserName)
-                @Html.ValidationMessageFor(m => m.UserName)
-            </li>
-            <li>
-                @Html.LabelFor(m => m.Password)
-                @Html.PasswordFor(m => m.Password)
-                @Html.ValidationMessageFor(m => m.Password)
-            </li>
-            <li>
-                @Html.CheckBoxFor(m => m.RememberMe)
-                @Html.LabelFor(m => m.RememberMe, new { @class = "checkbox" })
-            </li>
-        </ol>
-        <input type="submit" value="Log in" />
-    </fieldset>
-    <p>
-        @Html.ActionLink("Register", "Register") if you don't have an account.
-    </p>
-    <p>
-        Forgot your password? Click @Html.ActionLink("here", "ForgotPassword").
-    </p>
-}
-</section>
-
-@*<section class="social" id="socialLoginForm">
-    <h2>Use another service to log in.</h2>
-    @Html.Action("ExternalLoginsList", new { ReturnUrl = ViewBag.ReturnUrl })
-</section>*@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
-

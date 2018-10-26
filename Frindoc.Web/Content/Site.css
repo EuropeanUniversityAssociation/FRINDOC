@@ -328,9 +328,10 @@ aside {
 
 /* login page */
 #loginForm {
-    border-right: solid 2px #c8c8c8;
+    background-color: white;
+    padding: 10px;
     float: left;
-    width: 55%;
+    width: 300px;
 }
 
     #loginForm .validation-error {
@@ -911,4 +912,18 @@ td input {width: 100% !important;}
     -webkit-box-shadow: 0 0 5px black;
     -moz-box-shadow:    0 0 5px black;
     box-shadow:         0 0 5px black;
+}
+
+.shadow {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.introduction {
+    padding: 10px;
+}
+
+@media only screen and (min-width: 600px) {
+    .introduction {
+        margin-top: -80px;
+    }
 }
